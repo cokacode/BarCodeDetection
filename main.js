@@ -1,13 +1,21 @@
 let worker = new Worker("./worker.js");
 
 worker.addEventListener("message", (e)=>{
-    // Update the Interface
+    console.log(e.data);
 });
 
 worker.addEventListener("error", (e)=>{
     console.error(e);
     // update Error Interface
 });
+
+document.querySelector("input").addEventListener("change", (e)=>{
+    // console.log(document.querySelector("input").files[0]);
+    worker.postMessage({
+        image : document.querySelector("input").files[0]
+    });
+})
+
 
 
 
