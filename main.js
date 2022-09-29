@@ -1,35 +1,37 @@
+import { $, $$, log } from "./helperFunctions.js";
+
 let worker = new Worker("./worker.js");
 
-worker.addEventListener("message", (e)=>{
-    console.log(e.data);
+worker.addEventListener("message", (e) => {
+  log(e.data);
 });
 
-worker.addEventListener("error", (e)=>{
-    console.error(e);
-    // update Error Interface
+worker.addEventListener("error", (e) => {
+  console.error(e);
+  // update Error Interface
 });
 
-document.querySelector("input").addEventListener("change", (e)=>{
-    // console.log(document.querySelector("input").files[0]);
+$("#filePick").addEventListener("change", function (e) {
+  let file = this.files[0];
+  worker.postMessage({
+    image: file
+  });
+});
+
+$("#testImage").addEventListener("click", function(e){
+    let getWidth = $("img").width;
+    let getHeight = $("img").height;
+
+    let canvas = document.createElement("canvas");
+    let ctx = canvas.getContext("2d");
+    canvas.width = getWidth;
+    canvas.height = getHeight;
+
+    ctx.drawImage($("img"), getWidth, getHeight);
+    let imgData = ctx.createImageData(getWidth, getHeight, {colorSpace : "srgb"});
+
     worker.postMessage({
-        image : document.querySelector("input").files[0]
-    });
+        image : imgData
+    })
 })
 
-
-
-
-// (function () {
-//     if (!('BarcodeDetector' in window)) {
-//         alert('Barcode Detector is not supported by this browser.');
-//         // NotSuppoted();
-//     } else {
-//         BarcodeDetector.getSupportedFormats()
-//             .then(supportedFormats => {
-//                 let detector = new BarcodeDetector({ formats: supportedFormats });
-//                 detector.detect(blob);
-//             }).catch(err => {
-//                 console.error(err)
-//             })
-//     }
-// })()
